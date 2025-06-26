@@ -1,0 +1,1 @@
+web: gunicorn admin_jun_25:server
