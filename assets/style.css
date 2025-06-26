@@ -341,7 +341,7 @@
 .high2 {
   font-size: 70px;
   margin: 0px 0px 0px 0px;
-  padding: 35px 5px 35px 5px;
+  padding: 23px 7px 23px 7px;
   display: flex; /* Use flexbox for alignment */
   justify-content: center; /* Horizontal centering */
   align-items: center; /* Vertical centering */
@@ -391,7 +391,19 @@
 .high6 {
   font-size: 70px;
   margin: 0px 0px 0px 0px;
-  padding: 35px 5px 35px 5px;
+  padding: 15px 7px 15px 7px;
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  text-align: center; /* Ensure text inside is centered */
+  width: 100%; /* Ensure it spans full width */
+  height: 100%; /* Ensure it spans full height */
+}
+
+.high8 {
+  font-size: 70px;
+  margin: 0px 0px 0px 0px;
+  padding: 15px 5px 15px 5px;
   display: flex; /* Use flexbox for alignment */
   justify-content: center; /* Horizontal centering */
   align-items: center; /* Vertical centering */

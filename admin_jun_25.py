@@ -348,7 +348,7 @@ group_bar=px.bar(
     bargroupgap=0,  
 ).update_traces(
     textposition='auto',
-    hovertemplate='<b>Name:</b> %{label}<br><b>Count</b>: %{y}<extra></extra>'
+    hovertemplate='<b>%{label}</b>: %{y}<extra></extra>'
 )
 
 group_pie=px.pie(
@@ -356,7 +356,7 @@ group_pie=px.pie(
     names="Group",
     values='Count' 
 ).update_layout(
-    height=800,
+    height=600,
     width=950,
     title=f'{current_month} Ratio of Admin Groups',
     title_x=0.5,
@@ -370,7 +370,7 @@ group_pie=px.pie(
     textposition='auto',
     insidetextorientation='horizontal', 
     texttemplate='%{value}<br>(%{percent:.2%})',
-    hovertemplate='<b>%{label} Status</b>: %{value}<extra></extra>',
+    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
 )
 
 # --------------------------- Admin Task -------------------------- #
@@ -383,6 +383,7 @@ df['Task'] = (
             .str.strip()
             .replace({
                 "Newsletter - writing, editing, proofing" : "Newsletter",
+                "" : "N/A",
                 # "" : "",
             })
     )
@@ -448,7 +449,7 @@ task_bar=px.bar(
     color='Task',
     text='Count',
 ).update_layout(
-    height=850, 
+    height=1000, 
     width=1500,
     title=dict(
         text=f'{current_month} Admin Tasks',
@@ -497,7 +498,7 @@ task_bar=px.bar(
     bargroupgap=0,  
 ).update_traces(
     textposition='auto',
-    hovertemplate='<b>Name:</b> %{label}<br><b>Count</b>: %{y}<extra></extra>'
+    hovertemplate='<b>%{label}</b>: %{y}<extra></extra>'
 )
 
 task_pie=px.pie(
@@ -505,7 +506,7 @@ task_pie=px.pie(
     names="Task",
     values='Count' 
 ).update_layout(
-    height=600,
+    height=1000,
     width=950,
     title=f'{current_month} Ratio of Admin Tasks',
     title_x=0.5,
@@ -519,7 +520,10 @@ task_pie=px.pie(
     # textposition='auto',
     # insidetextorientation='horizontal', 
     # texttemplate='%{value}<br>(%{percent:.2%})',
-    hovertemplate='<b>%{label} Status</b>: %{value}<extra></extra>',
+    textinfo='none',  # Hides all labels
+    textposition='none',  # Ensures nothing is placed inside or outside the pie
+    texttemplate=None,  # Optional, but reinforces no custom text
+    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
 )
 
 # --------------------------- Admin Tags -------------------------- #
@@ -615,7 +619,7 @@ tag_bar=px.bar(
     color='Tags',
     text='Count',
 ).update_layout(
-    height=850, 
+    height=1100, 
     width=1500,
     title=dict(
         text=f'{current_month} Admin Tags',
@@ -664,7 +668,7 @@ tag_bar=px.bar(
     bargroupgap=0,  
 ).update_traces(
     textposition='auto',
-    hovertemplate='<b>Name:</b> %{label}<br><b>Count</b>: %{y}<extra></extra>'
+    hovertemplate='<b>%{label}</b>: %{y}<extra></extra>'
 )
 
 tag_pie=px.pie(
@@ -672,7 +676,7 @@ tag_pie=px.pie(
     names="Tags",
     values='Count' 
 ).update_layout(
-    height=600,
+    height=1200,
     width=950,
     title=f'{current_month} Ratio of Admin Tags',
     title_x=0.5,
@@ -683,131 +687,13 @@ tag_pie=px.pie(
     )
 ).update_traces(
     rotation=80,
-    textposition='auto',
-    insidetextorientation='horizontal', 
+    # textposition='auto',
+    # insidetextorientation='horizontal', 
     # texttemplate='%{value}<br>(%{percent:.2%})',
-    hovertemplate='<b>%{label} Status</b>: %{value}<extra></extra>',
-)
-
-# --------------------------- Admin Users -------------------------- #
-
-# print("User Unique before:", df['User'].unique().tolist())
-
-user_unique = [
-
-]
-
-df['User'] = (
-    df['User']
-        .astype(str)
-            .str.strip()
-            .replace({
-                "" : "",
-            })
-    )
-
-user_categories = [
-
-]
-
-user_normalized = {cat.lower().strip(): cat for cat in user_categories}
-counter = Counter()
-
-for entry in df['User']:
-    
-    # Split and clean each category
-    items = [i.strip().lower() for i in entry.split(",")]
-    for item in items:
-        if item in user_normalized:
-            counter[user_normalized[item]] += 1
-
-# for category, count in counter.items():
-#     print(f"Support Counts: \n {category}: {count}")
-
-df_user = pd.DataFrame(counter.items(), columns=['User', 'Count']).sort_values(by='Count', ascending=False)
-
-# df_user = df.groupby('User').size().reset_index(name='Count')
-# print('Admin Groups: \n', df_group)
-
-user_bar=px.bar(
-    df_user,
-    x='User',
-    y='Count',
-    color='User',
-    text='Count',
-).update_layout(
-    height=850, 
-    width=1500,
-    title=dict(
-        text=f'{current_month} Admin Users',
-        x=0.5, 
-        font=dict(
-            size=25,
-            family='Calibri',
-            color='black',
-            )
-    ),
-    font=dict(
-        family='Calibri',
-        size=18,
-        color='black'
-    ),
-    xaxis=dict(
-        # tickangle=-15,
-        tickfont=dict(size=18), 
-        title=dict(
-            # text=None,
-            text="User",
-            font=dict(size=20), 
-        ),
-        showticklabels=False  
-        # showticklabels=True  
-    ),
-    yaxis=dict(
-        title=dict(
-            text='Count',
-            font=dict(size=20),  
-        ),
-    ),
-    legend=dict(
-        # title='Support',
-        title_text='',
-        orientation="v",  
-        x=1.05,  
-        y=1,  
-        xanchor="left",  
-        yanchor="top",  
-        # visible=False
-        visible=True
-    ),
-    hovermode='closest', 
-    bargap=0.08,  
-    bargroupgap=0,  
-).update_traces(
-    textposition='auto',
-    hovertemplate='<b>Name:</b> %{label}<br><b>Count</b>: %{y}<extra></extra>'
-)
-
-user_pie=px.pie(
-    df_user,
-    names="User",
-    values='Count' 
-).update_layout(
-    height=850,
-    width=1500,
-    title=f'{current_month} Ratio of Admin Users',
-    title_x=0.5,
-    font=dict(
-        family='Calibri',
-        size=17,
-        color='black'
-    )
-).update_traces(
-    rotation=80,
-    textposition='auto',
-    insidetextorientation='horizontal', 
-    texttemplate='%{value}<br>(%{percent:.2%})',
-    hovertemplate='<b>%{label} Status</b>: %{value}<extra></extra>',
+    textinfo='none',  # Hides all labels
+    textposition='none',  # Ensures nothing is placed inside or outside the pie
+    texttemplate=None,  # Optional, but reinforces no custom text
+    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
 )
 
 # --------------------------- Collaborated Entity -------------------------- #
@@ -903,7 +789,7 @@ collab_bar=px.bar(
     bargroupgap=0,  
 ).update_traces(
     textposition='auto',
-    hovertemplate='<b>Name:</b> %{label}<br><b>Count</b>: %{y}<extra></extra>'
+    hovertemplate='<b>%{label}</b>: %{y}<extra></extra>'
 )
 
 collab_pie=px.pie(
@@ -921,11 +807,157 @@ collab_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=80,
+    rotation=180,
     textposition='auto',
     insidetextorientation='horizontal', 
     texttemplate='%{value}<br>(%{percent:.2%})',
-    hovertemplate='<b>%{label} Status</b>: %{value}<extra></extra>',
+    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
+)
+
+
+# --------------------------- Admin Users -------------------------- #
+
+# print("User Unique before:", df['User'].unique().tolist())
+
+user_unique = [
+'larrywallace.jr', 'Coby Albrecht', 'kiounis williams', 'Areebah Mubin', 'jaqueline.oviedo', 'Jordan Calbert', 'Sashricaa Manoj Kumar', 'Eric Roberts', 'pamela.parker', 'Angelita Delagarza', 'lavonne.williams', 'kimberly.holiday', 'Azaniah Israel', 'arianna.williams', 'antonio.montgomery', 'Michael Lambert', 'steve kemgang', 'tramisha.pete', 'toyacraney', 'felicia.chandler', 'Dominique Holman'
+]
+
+df['User'] = (
+    df['User']
+        .astype(str)
+            .str.strip()
+            .replace({
+                "steve kemgang" : "Steve Kemgang",
+                "toyacraney" : "Toya Craney",
+                "felicia.chandler" : "Felicia Chandler",
+                "tramisha.pete" : "Tramisha Pete",
+                "jaqueline.oviedo" : "Jaqueline Oviedo",
+                "larrywallace.jr" : "Larry Wallace Jr.",
+                "kiounis williams" : "Kiounis Williams",
+                "pamela.parker" : "Pamela Parker",
+                "lavonne.williams" : "Lavonne Williams",
+                "kimberly.holiday" : "Kimberly Holiday",
+                "antonio.montgomery" : "Antonio Montgomery",
+                "arianna.williams" : "Arianna Williams",
+                
+                # "Coby Albrecht" : "Coby Albrecht",
+                # "Michael Lambert" : "Michael Lambert",
+                # "Areebah Mubin" : "Areebah Mubin",
+                # "Jordan Calbert" : "Jordan Calbert",
+                # "Sashricaa Manoj Kumar" : "Sashricaa Manoj Kumar",
+                # "Eric Roberts" : "Eric Roberts",    
+                # "Angelita Delagarza" : "Angelita Delagarza",
+                "" : "",
+                "" : "",
+            })
+    )
+
+# print("User Unique after:", df['User'].unique().tolist())
+
+# user_categories = [
+
+# ]
+
+# user_normalized = {cat.lower().strip(): cat for cat in user_categories}
+# counter = Counter()
+
+# for entry in df['User']:
+    
+#     # Split and clean each category
+#     items = [i.strip().lower() for i in entry.split(",")]
+#     for item in items:
+#         if item in user_normalized:
+#             counter[user_normalized[item]] += 1
+
+# for category, count in counter.items():
+#     print(f"Support Counts: \n {category}: {count}")
+
+# df_user = pd.DataFrame(counter.items(), columns=['User', 'Count']).sort_values(by='Count', ascending=False)
+
+df_user = df.groupby('User').size().reset_index(name='Count')
+df_user = df_user.sort_values(by='Count', ascending=False)
+# print('Admin Groups: \n', df_group)
+
+user_bar=px.bar(
+    df_user,
+    x='User',
+    y='Count',
+    color='User',
+    text='Count',
+).update_layout(
+    height=850, 
+    width=1500,
+    title=dict(
+        text=f'{current_month} User Submissions',
+        x=0.5, 
+        font=dict(
+            size=25,
+            family='Calibri',
+            color='black',
+            )
+    ),
+    font=dict(
+        family='Calibri',
+        size=18,
+        color='black'
+    ),
+    xaxis=dict(
+        # tickangle=-15,
+        tickfont=dict(size=18), 
+        title=dict(
+            # text=None,
+            text="User",
+            font=dict(size=20), 
+        ),
+        showticklabels=False  
+        # showticklabels=True  
+    ),
+    yaxis=dict(
+        title=dict(
+            text='Count',
+            font=dict(size=20),  
+        ),
+    ),
+    legend=dict(
+        # title='Support',
+        title_text='',
+        orientation="v",  
+        x=1.05,  
+        y=1,  
+        xanchor="left",  
+        yanchor="top",  
+        # visible=False
+        visible=True
+    ),
+    hovermode='closest', 
+    bargap=0.08,  
+    bargroupgap=0,  
+).update_traces(
+    textposition='auto',
+    hovertemplate='<b>%{label}</b>: %{y}<extra></extra>'
+)
+
+user_pie=px.pie(
+    df_user,
+    names="User",
+    values='Count' 
+).update_layout(
+    height=900,
+    width=1500,
+    title=f'{current_month} Ratio of User Submissions',
+    title_x=0.5,
+    font=dict(
+        family='Calibri',
+        size=17,
+        color='black'
+    )
+).update_traces(
+    rotation=150,
+    textposition='auto',
+    insidetextorientation='horizontal', 
+    texttemplate='%{value}<br>(%{percent:.2%})',
+    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
 )
 
 # ========================== DataFrame Table ========================== #
@@ -1098,7 +1130,7 @@ html.Div(
                         className='hilite',
                         children=[
                             html.H1(
-                            className='high4',
+                            className='high8',
                             children=[df_travel]
                     ),
                         ]
@@ -1200,34 +1232,6 @@ html.Div(
             className='graph33',
             children=[
                 dcc.Graph(
-                    # figure=user_bar
-                )
-            ]
-        ),
-    ]
-),   
-
-html.Div(
-    className='row3',
-    children=[
-        html.Div(
-            className='graph33',
-            children=[
-                dcc.Graph(
-                    # figure=user_pie
-                )
-            ]
-        ),
-    ]
-),   
-
-html.Div(
-    className='row3',
-    children=[
-        html.Div(
-            className='graph33',
-            children=[
-                dcc.Graph(
                     figure=collab_bar
                 )
             ]
@@ -1243,6 +1247,34 @@ html.Div(
             children=[
                 dcc.Graph(
                     figure=collab_pie
+                )
+            ]
+        ),
+    ]
+),   
+
+html.Div(
+    className='row3',
+    children=[
+        html.Div(
+            className='graph33',
+            children=[
+                dcc.Graph(
+                    figure=user_bar
+                )
+            ]
+        ),
+    ]
+),   
+
+html.Div(
+    className='row3',
+    children=[
+        html.Div(
+            className='graph33',
+            children=[
+                dcc.Graph(
+                    figure=user_pie
                 )
             ]
         ),
