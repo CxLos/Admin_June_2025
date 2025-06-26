@@ -1392,8 +1392,8 @@ if __name__ == '__main__':
 
 # Heroku Setup:
 # heroku login
-# heroku create mc-impact-11-2024
-# heroku git:remote -a mc-impact-11-2024
+# heroku create admin-jun-25
+# heroku git:remote -a admin-jun-25
 # git push heroku main
 
 # Clear Heroku Cache:
