@@ -835,15 +835,7 @@ df['User'] = (
                 "kimberly.holiday" : "Kimberly Holiday",
                 "antonio.montgomery" : "Antonio Montgomery",
                 "arianna.williams" : "Arianna Williams",
-                
-                # "Coby Albrecht" : "Coby Albrecht",
-                # "Michael Lambert" : "Michael Lambert",
-                # "Areebah Mubin" : "Areebah Mubin",
-                # "Jordan Calbert" : "Jordan Calbert",
-                # "Sashricaa Manoj Kumar" : "Sashricaa Manoj Kumar",
-                # "Eric Roberts" : "Eric Roberts",    
-                # "Angelita Delagarza" : "Angelita Delagarza",
-                "" : "",
+                "carlos.bautista" : "Carlos Bautista",
                 "" : "",
             })
     )
