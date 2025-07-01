@@ -71,13 +71,8 @@ df = df.apply(
         lambda col: col.str.strip() if col.dtype == "object" or pd.api.types.is_string_dtype(col) else col
     )
 
-
 # Define a discrete color sequence
 color_sequence = px.colors.qualitative.Plotly
-
-# Filtered df where 'Date of Activity:' is in January
-df['Start Date'] = pd.to_datetime(df['Start Date'], errors='coerce')
-df = df[df['Start Date'].dt.month == 6]
 
 # Get the reporting month:
 current_month = datetime(2025, 6, 1).strftime("%B")
@@ -250,7 +245,7 @@ df_engaged = df['Engaged'].sum()
 
 # --------------------------- Admin Group -------------------------- #
 
-# print("Group Unique before:", df['Group'].unique().tolist())
+print("Group Unique before:", df['Group'].unique().tolist())
 
 df['Group'] = (
     df['Group']
@@ -807,7 +802,7 @@ collab_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=180,
+    rotation=-20,
     textposition='auto',
     insidetextorientation='horizontal', 
     texttemplate='%{value}<br>(%{percent:.2%})',
