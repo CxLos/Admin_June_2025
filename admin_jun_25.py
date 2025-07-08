@@ -77,6 +77,7 @@ color_sequence = px.colors.qualitative.Plotly
 # Get the reporting month:
 current_month = datetime(2025, 6, 1).strftime("%B")
 report_year = datetime(2025, 6, 1).strftime("%Y")
+report = "Admin"
 # -------------------------------------------------
 # print(df)
 # print(df[["Date of Activity", "Total travel time (minutes):"]])
@@ -147,7 +148,6 @@ df.rename(
         "Duration (h)": "Duration",
         "Total Travel Time": "Travel",
         "# of People Engaged": "Engaged",
-        
         "Group": "Group",
         "Task": "Task",
         "Tags": "Tags",
@@ -188,14 +188,27 @@ admin_hours=round(admin_hours)
 
 df['Travel'] = df['Travel'].fillna('0')
 
+travel_unique =[
+    '', 'None', 
+    '1-30 Minutes', 
+    '31-60 Minutes', 
+    '61-90 Minutes', 
+    '0-30 Minutes'
+]
+
+df['Travel'] = df['Travel'].fillna('0')
+
 df['Travel'] = (
     df['Travel']
         .astype(str)
         .str.strip()
             .replace({
                 '0-30 Minutes': '30',
+                '1-30 Minutes': '30',
                 '31-60 Minutes': '60',
-                'None': '30',
+                '61-90 Minutes': '90',
+                '': '0',
+                'None': '0',
             })
 )
 
@@ -245,7 +258,7 @@ df_engaged = df['Engaged'].sum()
 
 # --------------------------- Admin Group -------------------------- #
 
-print("Group Unique before:", df['Group'].unique().tolist())
+# print("Group Unique before:", df['Group'].unique().tolist())
 
 df['Group'] = (
     df['Group']
@@ -272,8 +285,6 @@ group_normalized = {cat.lower().strip(): cat for cat in group_categories}
 counter = Counter()
 
 for entry in df['Group']:
-    
-    # Split and clean each category
     items = [i.strip().lower() for i in entry.split(",")]
     for item in items:
         if item in group_normalized:
@@ -381,7 +392,7 @@ df['Task'] = (
                 "" : "N/A",
                 # "" : "",
             })
-    )
+)
 
 # print("Task Unique after:", df['Task'].unique().tolist())
 
@@ -501,7 +512,7 @@ task_pie=px.pie(
     names="Task",
     values='Count' 
 ).update_layout(
-    height=1000,
+    height=1100,
     width=950,
     title=f'{current_month} Ratio of Admin Tasks',
     title_x=0.5,
@@ -511,14 +522,16 @@ task_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=80,
-    # textposition='auto',
-    # insidetextorientation='horizontal', 
-    # texttemplate='%{value}<br>(%{percent:.2%})',
-    textinfo='none',  # Hides all labels
-    textposition='none',  # Ensures nothing is placed inside or outside the pie
-    texttemplate=None,  # Optional, but reinforces no custom text
-    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
+    rotation=150,
+    textposition='auto',
+    insidetextorientation='horizontal', 
+    texttemplate='%{percent:.1%}',
+    # texttemplate='%{value}<br>(%{percent:.1%})',
+    # textinfo='none',  # Hides all labels
+    # textposition='none',  # Ensures nothing is placed inside or outside the pie
+    # texttemplate=None,  # Optional, but reinforces no custom text
+    # hovertemplate='<b>%{label}</b>: %{value}/{percent:.2%}<extra></extra>',
+    hoverinfo='label+value+percent',
 )
 
 # --------------------------- Admin Tags -------------------------- #
@@ -681,14 +694,16 @@ tag_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=80,
-    # textposition='auto',
-    # insidetextorientation='horizontal', 
+    rotation=180,
+    textposition='auto',
+    insidetextorientation='horizontal', 
+    texttemplate='%{percent:.2%}',
     # texttemplate='%{value}<br>(%{percent:.2%})',
-    textinfo='none',  # Hides all labels
-    textposition='none',  # Ensures nothing is placed inside or outside the pie
-    texttemplate=None,  # Optional, but reinforces no custom text
-    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
+    # textinfo='none',  # Hides all labels
+    # textposition='none',  # Ensures nothing is placed inside or outside the pie
+    # texttemplate=None,  # Optional, but reinforces no custom text
+    # hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
+    hoverinfo='label+percent',
 )
 
 # --------------------------- Collaborated Entity -------------------------- #
@@ -705,27 +720,21 @@ df['Collab'] = (
             })
     )
 
-collab_categories = [
-
-]
-
-collab_normalized = {cat.lower().strip(): cat for cat in collab_categories}
-counter = Counter()
-
+# Clean and split all entries, then flatten into a single list
+all_collabs = []
 for entry in df['Collab']:
-    
-    # Split and clean each category
-    items = [i.strip().lower() for i in entry.split(",")]
-    for item in items:
-        if item in collab_normalized:
-            counter[collab_normalized[item]] += 1
+    items = [i.strip() for i in str(entry).split(",") if i.strip() and i.strip().lower() != "n/a"]
+    all_collabs.extend(items)
+
+# Count occurrences
+counter = Counter(all_collabs)
 
 # for category, count in counter.items():
 #     print(f"Support Counts: \n {category}: {count}")
 
-# df_collab = pd.DataFrame(counter.items(), columns=['Collab', 'Count']).sort_values(by='Count', ascending=False)
+df_collab = pd.DataFrame(counter.items(), columns=['Collab', 'Count']).sort_values(by='Count', ascending=False)
 
-df_collab = df.groupby('Collab').size().reset_index(name='Count')
+# df_collab = df.groupby('Collab').size().reset_index(name='Count')
 # print('Admin Collabs: \n', df_collab)
 
 collab_bar=px.bar(
@@ -805,8 +814,10 @@ collab_pie=px.pie(
     rotation=-20,
     textposition='auto',
     insidetextorientation='horizontal', 
-    texttemplate='%{value}<br>(%{percent:.2%})',
-    hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
+    texttemplate='%{percent:.1%}',
+    # texttemplate='%{value}<br>(%{percent:.2%})',
+    # hovertemplate='<b>%{label}</b>: %{value}<extra></extra>',
+    hoverinfo='label+value+percent',
 )
 
 
@@ -930,7 +941,7 @@ user_pie=px.pie(
     names="User",
     values='Count' 
 ).update_layout(
-    height=900,
+    height=1100,
     width=1500,
     title=f'{current_month} Ratio of User Submissions',
     title_x=0.5,
@@ -940,7 +951,7 @@ user_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=150,
+    rotation=160,
     textposition='auto',
     insidetextorientation='horizontal', 
     texttemplate='%{value}<br>(%{percent:.2%})',
@@ -1108,7 +1119,7 @@ html.Div(
             children=[
             html.Div(
                 className='high3',
-                children=['Travel Time']
+                children=[f'{current_month} {report} Travel Hours']
             ),
             html.Div(
                 className='circle2',
